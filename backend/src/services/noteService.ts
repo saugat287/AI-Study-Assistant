@@ -49,5 +49,47 @@ export async function getDashboardStats(userId: string) {
     select: { id: true, title: true, createdAt: true },
   });
 
-  return { noteCount, summaryCount, quizCount, flashcardDeckCount, chatCount, recentNotes };
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+  const [weeklyNoteCount, weeklyQuizCount] = await Promise.all([
+    prisma.note.count({ where: { userId, createdAt: { gte: sevenDaysAgo } } }),
+    prisma.quiz.count({ where: { note: { userId }, createdAt: { gte: sevenDaysAgo } } }),
+  ]);
+
+  // Calculate streak based on note creation dates
+  const allNotes = await prisma.note.findMany({
+    where: { userId },
+    select: { createdAt: true },
+    orderBy: { createdAt: 'desc' }
+  });
+
+  let studyStreak = 0;
+  let currentDate = new Date();
+  currentDate.setHours(0, 0, 0, 0);
+  
+  const uniqueDates = Array.from(new Set(allNotes.map(n => {
+    const d = new Date(n.createdAt);
+    d.setHours(0, 0, 0, 0);
+    return d.getTime();
+  })));
+
+  for (const time of uniqueDates) {
+    if (time === currentDate.getTime()) {
+      studyStreak++;
+      currentDate.setDate(currentDate.getDate() - 1);
+    } else if (time === currentDate.getTime() - 86400000 && studyStreak === 0) {
+      // If they haven't studied today but studied yesterday, the streak is still alive
+      studyStreak++;
+      currentDate = new Date(time);
+      currentDate.setDate(currentDate.getDate() - 1);
+    } else {
+      break;
+    }
+  }
+
+  return { 
+    noteCount, summaryCount, quizCount, flashcardDeckCount, chatCount, recentNotes,
+    weeklyNoteCount, weeklyQuizCount, studyStreak
+  };
 }

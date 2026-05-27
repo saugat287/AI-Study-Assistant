@@ -85,5 +85,8 @@ export interface DashboardStats {
   quizCount: number;
   flashcardDeckCount: number;
   chatCount: number;
+  studyStreak: number;
+  weeklyNoteCount: number;
+  weeklyQuizCount: number;
   recentNotes: Array<{ id: string; title: string; createdAt: string }>;
 }

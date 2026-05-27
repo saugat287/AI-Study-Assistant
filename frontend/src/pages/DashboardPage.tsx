@@ -169,36 +169,40 @@ export function DashboardPage() {
       <div className="grid md:grid-cols-2 gap-6 mb-8 relative z-10">
         <Draggable>
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.2 }} className="cursor-move relative">
-            <Card className="shadow-2xl shadow-[#8b5cf6]/10 dark:bg-white/5 backdrop-blur-2xl border border-gray-200 dark:border-white/10 relative overflow-hidden h-full">
+            <Card className="shadow-2xl shadow-[#8b5cf6]/10 dark:bg-white/5 backdrop-blur-2xl border border-gray-200 dark:border-white/10 relative overflow-hidden h-full group">
               <div className="absolute inset-0 bg-gradient-to-r from-[#8b5cf6]/10 to-[#10b981]/10 opacity-30" />
-              <div className="relative flex items-center justify-between pointer-events-none">
+              
+              <Link to="/notes" className="absolute inset-0 z-20 cursor-pointer"></Link>
+              <div className="absolute inset-0 bg-white/0 group-hover:bg-white/5 dark:group-hover:bg-white/5 transition-colors z-10 pointer-events-none" />
+
+              <div className="relative flex items-center justify-between pointer-events-none z-10">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 rounded-2xl bg-orange-500/20 flex items-center justify-center shadow-[0_0_15px_rgba(249,115,22,0.4)]">
                     <Flame className="w-6 h-6 text-orange-500" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-gray-900 dark:text-white text-lg">Study Streak</h3>
+                    <h3 className="font-bold text-gray-900 dark:text-white text-lg group-hover:text-orange-500 transition-colors">Study Streak</h3>
                     <p className="text-gray-600 dark:text-gray-400 text-sm">You're on a roll! Keep it up.</p>
                   </div>
                 </div>
                 <div className="text-right">
                   <div className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-[#8b5cf6] drop-shadow-md">
-                    3 Days
+                    {data?.studyStreak ?? 0} Days
                   </div>
                   <p className="text-xs text-gray-600 dark:text-gray-400 uppercase tracking-widest mt-1">Current Streak</p>
                 </div>
               </div>
               
-              <div className="mt-6 relative pointer-events-none">
+              <div className="mt-6 relative pointer-events-none z-10">
                 <div className="flex justify-between text-xs text-gray-600 dark:text-gray-400 mb-2 font-medium">
                   <span>Goal: 7 Days</span>
-                  <span>43% Completed</span>
+                  <span>{Math.min(100, Math.round(((data?.studyStreak ?? 0) / 7) * 100))}% Completed</span>
                 </div>
                 <div className="w-full bg-gray-200 dark:bg-gray-800 rounded-full h-3 overflow-hidden shadow-inner">
                   <motion.div 
                     className="bg-gradient-to-r from-orange-500 via-[#8b5cf6] to-[#10b981] h-full rounded-full relative"
                     initial={{ width: 0 }}
-                    animate={{ width: '43%' }}
+                    animate={{ width: `${Math.min(100, ((data?.studyStreak ?? 0) / 7) * 100)}%` }}
                     transition={{ duration: 1.5, ease: "easeOut" }}
                   >
                     <div className="absolute top-0 right-0 bottom-0 left-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.3)_50%,transparent_75%)] bg-[length:250%_250%] animate-shimmer" />
@@ -212,29 +216,33 @@ export function DashboardPage() {
         {/* Study Goals Widget */}
         <Draggable>
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.25 }} className="cursor-move relative">
-            <Card className="shadow-2xl shadow-[#10b981]/10 dark:bg-white/5 backdrop-blur-2xl border border-gray-200 dark:border-white/10 relative overflow-hidden h-full">
+            <Card className="shadow-2xl shadow-[#10b981]/10 dark:bg-white/5 backdrop-blur-2xl border border-gray-200 dark:border-white/10 relative overflow-hidden h-full group">
               <div className="absolute inset-0 bg-gradient-to-r from-[#10b981]/10 to-[#8b5cf6]/10 opacity-30" />
-              <div className="relative pointer-events-none">
-                <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-4 flex items-center gap-2">
+              
+              <Link to="/notes" className="absolute inset-0 z-20 cursor-pointer"></Link>
+              <div className="absolute inset-0 bg-white/0 group-hover:bg-white/5 dark:group-hover:bg-white/5 transition-colors z-10 pointer-events-none" />
+
+              <div className="relative pointer-events-none z-10">
+                <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-4 flex items-center gap-2 group-hover:text-emerald-500 transition-colors">
                   <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]"></span> Weekly Goals
                 </h3>
                 <div className="space-y-3">
                   <div>
                     <div className="flex justify-between text-xs text-gray-600 dark:text-gray-400 mb-1">
                       <span>Create 5 Notes</span>
-                      <span>{Math.min(5, data?.noteCount ?? 0)}/5</span>
+                      <span>{Math.min(5, data?.weeklyNoteCount ?? 0)}/5</span>
                     </div>
                     <div className="w-full bg-gray-200 dark:bg-gray-800 rounded-full h-2">
-                      <div className="bg-gradient-to-r from-emerald-400 to-emerald-600 h-full rounded-full shadow-[0_0_10px_#10b981]" style={{ width: `${Math.min(100, ((data?.noteCount ?? 0) / 5) * 100)}%` }} />
+                      <div className="bg-gradient-to-r from-emerald-400 to-emerald-600 h-full rounded-full shadow-[0_0_10px_#10b981]" style={{ width: `${Math.min(100, ((data?.weeklyNoteCount ?? 0) / 5) * 100)}%` }} />
                     </div>
                   </div>
                   <div>
                     <div className="flex justify-between text-xs text-gray-600 dark:text-gray-400 mb-1">
                       <span>Take 3 Quizzes</span>
-                      <span>{Math.min(3, data?.quizCount ?? 0)}/3</span>
+                      <span>{Math.min(3, data?.weeklyQuizCount ?? 0)}/3</span>
                     </div>
                     <div className="w-full bg-gray-200 dark:bg-gray-800 rounded-full h-2">
-                      <div className="bg-gradient-to-r from-purple-400 to-purple-600 h-full rounded-full shadow-[0_0_10px_#8b5cf6]" style={{ width: `${Math.min(100, ((data?.quizCount ?? 0) / 3) * 100)}%` }} />
+                      <div className="bg-gradient-to-r from-purple-400 to-purple-600 h-full rounded-full shadow-[0_0_10px_#8b5cf6]" style={{ width: `${Math.min(100, ((data?.weeklyQuizCount ?? 0) / 3) * 100)}%` }} />
                     </div>
                   </div>
                 </div>
