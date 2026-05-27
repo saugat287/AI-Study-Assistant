@@ -5,9 +5,8 @@ AI Study Assistant is a full-stack study platform that helps students manage not
 ---
 ## 🌐 Live Demo
 
-**Frontend**: [ai-study-assistant.vercel.app](https://ai-study-assistant.vercel.app)  
-**Status**: Ready for deployment
-
+**Frontend**: [ai-study-assistant-coral.vercel.app](https://ai-study-assistant-coral.vercel.app)  
+**Status**: 🟢 Live and Deployed
 ---
 ## What this project does
 
