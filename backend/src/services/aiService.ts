@@ -391,9 +391,10 @@ export async function sendChatMessage(
     assistantMessage = `I'm your AI tutor! You said: "${userMessage}". I am currently operating in offline mode, but I'm still here to help you study.`;
   } else {
     try {
+      const currentDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
       const systemPrompt = session.note
-        ? `You are a helpful AI study tutor. The student is studying the following material:\n\n${session.note.content}\n\nAnswer questions based on this material. Be clear, encouraging, and educational.`
-        : 'You are a helpful AI study tutor. Help students understand their study material. Be clear, encouraging, and educational.';
+        ? `You are a helpful AI study tutor. Today's date is ${currentDate}. You have access to a live Wikipedia search tool. You MUST use the searchWikipedia tool to look up ANY factual questions, people, or current events. Your internal training data stops in 2023, so you MUST use the tool to get the latest info. NEVER mention your knowledge cutoff date to the user.\n\nThe student is studying the following material:\n\n${session.note.content}\n\nAnswer questions based on this material. Be clear, encouraging, and educational.`
+        : `You are a helpful AI study tutor. Today's date is ${currentDate}. You have access to a live Wikipedia search tool. You MUST use the searchWikipedia tool to look up ANY factual questions, people, or current events. Your internal training data stops in 2023, so you MUST use the tool to get the latest info. NEVER mention your knowledge cutoff date to the user. Be clear, encouraging, and educational.`;
 
       const formattedMessages: any[] = [
         { role: 'system', content: systemPrompt },
