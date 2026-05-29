@@ -392,9 +392,28 @@ export async function sendChatMessage(
   } else {
     try {
       const currentDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+      
+      let wikiContext = "";
+      try {
+        const searchUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(userMessage)}&utf8=&format=json`;
+        const searchRes = await fetch(searchUrl);
+        const searchData = (await searchRes.json()) as any;
+        
+        if (searchData.query?.search?.length > 0) {
+          const topHit = searchData.query.search[0];
+          const extractUrl = `https://en.wikipedia.org/w/api.php?action=query&prop=extracts&exintro=1&explaintext=1&pageids=${topHit.pageid}&format=json`;
+          const extractRes = await fetch(extractUrl);
+          const extractData = (await extractRes.json()) as any;
+          const extract = extractData.query?.pages[topHit.pageid]?.extract || topHit.snippet.replace(/<[^>]+>/g, '');
+          wikiContext = `\n\nLive Wikipedia Context for the user's query:\nTitle: ${topHit.title}\n${extract}`;
+        }
+      } catch (err) {
+        console.warn("Wiki search failed", err);
+      }
+
       const systemPrompt = session.note
-        ? `You are a helpful AI study tutor. Today's date is ${currentDate}. You have access to a live Wikipedia search tool. You MUST use the searchWikipedia tool to look up ANY factual questions, people, or current events. Your internal training data stops in 2023, so you MUST use the tool to get the latest info. NEVER mention your knowledge cutoff date to the user.\n\nThe student is studying the following material:\n\n${session.note.content}\n\nAnswer questions based on this material. Be clear, encouraging, and educational.`
-        : `You are a helpful AI study tutor. Today's date is ${currentDate}. You have access to a live Wikipedia search tool. You MUST use the searchWikipedia tool to look up ANY factual questions, people, or current events. Your internal training data stops in 2023, so you MUST use the tool to get the latest info. NEVER mention your knowledge cutoff date to the user. Be clear, encouraging, and educational.`;
+        ? `You are a helpful AI study tutor. Today's date is ${currentDate}. ${wikiContext}\n\nThe student is studying the following material:\n\n${session.note.content}\n\nAnswer questions based on this material and the live context. Be clear, encouraging, and educational.`
+        : `You are a helpful AI study tutor. Today's date is ${currentDate}. ${wikiContext}\n\nAnswer the user's question accurately using the live context if relevant. Be clear, encouraging, and educational.`;
 
       const formattedMessages: any[] = [
         { role: 'system', content: systemPrompt },
@@ -409,76 +428,12 @@ export async function sendChatMessage(
       
       formattedMessages.push({ role: 'user', content: userMessage });
 
-      const tools = [
-        {
-          type: "function" as const,
-          function: {
-            name: "searchWikipedia",
-            description: "Search Wikipedia for real-time and up-to-date information. Use this whenever the user asks for facts, current events, or information you don't know.",
-            parameters: {
-              type: "object",
-              properties: { query: { type: "string" } },
-              required: ["query"]
-            }
-          }
-        }
-      ];
-
-      let chatCompletion = await groq.chat.completions.create({
+      const chatCompletion = await groq.chat.completions.create({
         messages: formattedMessages,
         model: MODEL,
-        tools,
       });
 
-      const responseMessage = chatCompletion.choices[0]?.message;
-
-      if (responseMessage?.tool_calls?.length) {
-        // Append assistant's tool call request
-        formattedMessages.push(responseMessage as any);
-
-        // Execute each tool call
-        for (const toolCall of responseMessage.tool_calls) {
-          if (toolCall.function.name === 'searchWikipedia') {
-            const args = JSON.parse(toolCall.function.arguments || '{}');
-            try {
-              const searchUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(args.query)}&utf8=&format=json`;
-              const searchRes = await fetch(searchUrl);
-              const searchData = (await searchRes.json()) as any;
-              
-              let wikiContent = "No results found.";
-              if (searchData.query?.search?.length > 0) {
-                const topHit = searchData.query.search[0];
-                const extractUrl = `https://en.wikipedia.org/w/api.php?action=query&prop=extracts&exintro=1&explaintext=1&pageids=${topHit.pageid}&format=json`;
-                const extractRes = await fetch(extractUrl);
-                const extractData = (await extractRes.json()) as any;
-                const extract = extractData.query?.pages[topHit.pageid]?.extract || topHit.snippet.replace(/<[^>]+>/g, '');
-                wikiContent = `Title: ${topHit.title}\n\n${extract}`;
-              }
-              
-              formattedMessages.push({
-                role: 'tool',
-                tool_call_id: toolCall.id,
-                content: wikiContent
-              });
-            } catch (err) {
-              formattedMessages.push({
-                role: 'tool',
-                tool_call_id: toolCall.id,
-                content: "Failed to search Wikipedia."
-              });
-            }
-          }
-        }
-
-        // Second pass with tool results
-        chatCompletion = await groq.chat.completions.create({
-          messages: formattedMessages,
-          model: MODEL,
-        });
-        assistantMessage = chatCompletion.choices[0]?.message?.content || '';
-      } else {
-        assistantMessage = responseMessage?.content || '';
-      }
+      assistantMessage = chatCompletion.choices[0]?.message?.content || '';
     } catch (error) {
       console.warn("Groq chat error, using fallback mock:", error);
       assistantMessage = `I'm your AI tutor! You said: "${userMessage}". I am currently operating in offline mode, but I'm still here to help you study.`;
