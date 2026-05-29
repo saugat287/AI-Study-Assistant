@@ -2,9 +2,11 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Play, Pause, RotateCcw, Timer } from 'lucide-react';
 import Draggable from 'react-draggable';
+import { useAppStore } from '../../store/appStore';
 
 export function PomodoroTimer() {
-  const [isOpen, setIsOpen] = useState(false);
+  const { activeWidget, setActiveWidget } = useAppStore();
+  const isOpen = activeWidget === 'timer';
   const [timeLeft, setTimeLeft] = useState(25 * 60);
   const [isActive, setIsActive] = useState(false);
 
@@ -36,8 +38,8 @@ export function PomodoroTimer() {
     <>
       {/* Floating Toggle Button */}
       <motion.button
-        onClick={() => setIsOpen(true)}
-        className="fixed bottom-32 right-4 md:right-8 z-40 w-14 h-14 rounded-full bg-gradient-to-r from-[#8b5cf6] to-[#10b981] flex items-center justify-center text-white shadow-[0_0_20px_rgba(16,185,129,0.5)] hover:shadow-[0_0_30px_rgba(139,92,246,0.8)]"
+        onClick={() => setActiveWidget(isOpen ? 'none' : 'timer')}
+        className="fixed bottom-20 sm:bottom-32 right-4 md:right-8 z-40 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-r from-[#8b5cf6] to-[#10b981] flex items-center justify-center text-white shadow-[0_0_20px_rgba(16,185,129,0.5)] hover:shadow-[0_0_30px_rgba(139,92,246,0.8)]"
         whileHover={{ scale: 1.1, y: -5 }}
         whileTap={{ scale: 0.9 }}
         initial={{ opacity: 0, scale: 0 }}
@@ -64,7 +66,7 @@ export function PomodoroTimer() {
                     <Timer className="w-4 h-4 text-[#10b981]" />
                     <span className="text-sm font-semibold text-white">Focus Timer</span>
                   </div>
-                  <button type="button" onClick={() => setIsOpen(false)} onPointerDown={(e) => e.stopPropagation()} onTouchStart={(e) => e.stopPropagation()} className="cancel-drag p-1 text-gray-400 hover:text-white transition-colors">
+                  <button type="button" onClick={() => setActiveWidget('none')} onPointerDown={(e) => e.stopPropagation()} onTouchStart={(e) => e.stopPropagation()} className="cancel-drag p-1 text-gray-400 hover:text-white transition-colors">
                     &times;
                   </button>
                 </div>
@@ -90,7 +92,7 @@ export function PomodoroTimer() {
                       </defs>
                     </svg>
                     <div className="absolute inset-0 flex items-center justify-center flex-col">
-                      <span className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-300 drop-shadow-lg">
+                      <span className="text-3xl font-black text-white drop-shadow-md">
                         {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
                       </span>
                     </div>

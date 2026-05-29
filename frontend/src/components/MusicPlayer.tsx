@@ -1,7 +1,8 @@
-import { useState, useRef } from 'react';
+import { useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Play, Pause, Music, Volume2, VolumeX, FastForward } from 'lucide-react';
 import Draggable from 'react-draggable';
+import { useAppStore } from '../../store/appStore';
 
 const TRACKS = [
   { title: "Deep Focus (Lofi Beats)", url: "https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3" },
@@ -10,7 +11,8 @@ const TRACKS = [
 ];
 
 export function MusicPlayer() {
-  const [isOpen, setIsOpen] = useState(false);
+  const { activeWidget, setActiveWidget } = useAppStore();
+  const isOpen = activeWidget === 'music';
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [trackIndex, setTrackIndex] = useState(0);
@@ -59,8 +61,8 @@ export function MusicPlayer() {
 
       {/* Floating Toggle Button */}
       <motion.button
-        onClick={() => setIsOpen(true)}
-        className="fixed bottom-[12rem] right-4 md:right-8 z-40 w-14 h-14 rounded-full bg-gradient-to-r from-[#10b981] to-[#0ea5e9] flex items-center justify-center text-white shadow-[0_0_20px_rgba(14,165,233,0.5)] hover:shadow-[0_0_30px_rgba(16,185,129,0.8)]"
+        onClick={() => setActiveWidget(isOpen ? 'none' : 'music')}
+        className="fixed bottom-[6rem] sm:bottom-[12rem] right-4 md:right-8 z-40 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-r from-[#10b981] to-[#0ea5e9] flex items-center justify-center text-white shadow-[0_0_20px_rgba(14,165,233,0.5)] hover:shadow-[0_0_30px_rgba(16,185,129,0.8)]"
         whileHover={{ scale: 1.1, y: -5 }}
         whileTap={{ scale: 0.9 }}
         initial={{ opacity: 0, scale: 0 }}
@@ -95,7 +97,7 @@ export function MusicPlayer() {
                     <Music className="w-4 h-4" />
                     <span className="text-sm font-semibold text-white">Focus Player</span>
                   </div>
-                  <button type="button" onClick={() => setIsOpen(false)} onPointerDown={(e) => e.stopPropagation()} onTouchStart={(e) => e.stopPropagation()} className="cancel-drag p-1 text-gray-400 hover:text-white transition-colors">
+                  <button type="button" onClick={() => setActiveWidget('none')} onPointerDown={(e) => e.stopPropagation()} onTouchStart={(e) => e.stopPropagation()} className="cancel-drag p-1 text-gray-400 hover:text-white transition-colors">
                     &times;
                   </button>
                 </div>
