@@ -60,7 +60,7 @@ export function MusicPlayer() {
       {/* Floating Toggle Button */}
       <motion.button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-[12rem] right-8 z-40 w-14 h-14 rounded-full bg-gradient-to-r from-[#10b981] to-[#0ea5e9] flex items-center justify-center text-white shadow-[0_0_20px_rgba(14,165,233,0.5)] hover:shadow-[0_0_30px_rgba(16,185,129,0.8)]"
+        className="fixed bottom-[12rem] right-4 md:right-8 z-40 w-14 h-14 rounded-full bg-gradient-to-r from-[#10b981] to-[#0ea5e9] flex items-center justify-center text-white shadow-[0_0_20px_rgba(14,165,233,0.5)] hover:shadow-[0_0_30px_rgba(16,185,129,0.8)]"
         whileHover={{ scale: 1.1, y: -5 }}
         whileTap={{ scale: 0.9 }}
         initial={{ opacity: 0, scale: 0 }}
@@ -80,12 +80,12 @@ export function MusicPlayer() {
       <AnimatePresence>
         {isOpen && (
           <div className="fixed inset-0 z-50 pointer-events-none flex items-center justify-center">
-            <Draggable handle=".drag-handle">
+            <Draggable handle=".drag-handle" cancel=".cancel-drag">
               <motion.div
                 initial={{ opacity: 0, scale: 0.9, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                className="pointer-events-auto absolute bottom-40 right-6 w-80 bg-[#0a0a0f]/90 backdrop-blur-2xl border border-white/20 rounded-3xl shadow-[0_0_40px_rgba(14,165,233,0.2)] overflow-hidden neon-card"
+                className="pointer-events-auto absolute bottom-40 right-4 md:right-6 w-[calc(100vw-2rem)] sm:w-80 bg-[#0a0a0f]/90 backdrop-blur-2xl border border-white/20 rounded-3xl shadow-[0_0_40px_rgba(14,165,233,0.2)] overflow-hidden neon-card"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-[#10b981]/10 to-[#0ea5e9]/10 pointer-events-none" />
                 
@@ -95,7 +95,7 @@ export function MusicPlayer() {
                     <Music className="w-4 h-4" />
                     <span className="text-sm font-semibold text-white">Focus Player</span>
                   </div>
-                  <button onClick={() => setIsOpen(false)} className="text-gray-400 hover:text-white transition-colors">
+                  <button type="button" onClick={() => setIsOpen(false)} onPointerDown={(e) => e.stopPropagation()} className="cancel-drag p-1 text-gray-400 hover:text-white transition-colors">
                     &times;
                   </button>
                 </div>

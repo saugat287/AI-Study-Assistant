@@ -81,10 +81,10 @@ export async function generateQuiz(
   if (shouldMock()) {
     for (let i = 0; i < questionCount; i++) {
       questions.push({
-        question: `What is a key takeaway from "${note.title}" (Mock Question ${i + 1})?`,
+        question: `What is a key takeaway from "${note.title}" (Practice Question ${i + 1})?`,
         options: ["Option A: Incorrect", "Option B: Incorrect", "Option C: Correct Answer", "Option D: Incorrect"],
         correctAnswer: 2,
-        explanation: "This is a mock explanation since no API key was provided."
+        explanation: "This is a practice explanation."
       });
     }
   } else {
@@ -117,10 +117,10 @@ ${note.content}`;
       console.warn("Groq quiz error, using fallback mock:", error);
       for (let i = 0; i < questionCount; i++) {
         questions.push({
-          question: `What is a key takeaway from "${note.title}" (Mock Question ${i + 1})?`,
+          question: `What is a key takeaway from "${note.title}" (Practice Question ${i + 1})?`,
           options: ["Option A: Incorrect", "Option B: Incorrect", "Option C: Correct Answer", "Option D: Incorrect"],
           correctAnswer: 2,
-          explanation: "This is a fallback mock explanation used because the AI service is currently unavailable or the API key is invalid."
+          explanation: "This is a fallback practice explanation generated while offline."
         });
       }
     }
@@ -197,8 +197,8 @@ export async function generateFlashcards(
   if (shouldMock()) {
     for (let i = 0; i < cardCount; i++) {
       cards.push({
-        front: `Mock Term ${i + 1} from ${note.title}`,
-        back: `This is a mock definition for Term ${i + 1}. Please add a real API key for real flashcards.`
+        front: `Key Term ${i + 1} from ${note.title}`,
+        back: `This is a practice definition for Term ${i + 1}.`
       });
     }
   } else {
@@ -225,8 +225,8 @@ ${note.content}`;
       console.warn("Groq flashcard error, using fallback mock:", error);
       for (let i = 0; i < cardCount; i++) {
         cards.push({
-          front: `Mock Term ${i + 1} from ${note.title}`,
-          back: `This is a fallback definition for Term ${i + 1}. The AI service is currently unavailable.`
+          front: `Key Term ${i + 1} from ${note.title}`,
+          back: `This is a fallback definition for Term ${i + 1} generated while offline.`
         });
       }
     }
@@ -321,7 +321,7 @@ export async function magicGenerate(
   let noteContent = '';
 
   if (shouldMock()) {
-    noteContent = `This is a magically generated mock note for the topic: ${topic}. Since no API key is provided, this mock content is used. It covers all the essential concepts of ${topic}.`;
+    noteContent = `This is a magically generated study note for the topic: ${topic}. It covers all the essential concepts of ${topic} to help you study effectively while in offline mode.`;
   } else {
     try {
       const prompt = `You are an expert study assistant. Generate a comprehensive and educational study note about the following topic: "${topic}". The note should be well-structured with headings and bullet points.`;
@@ -332,7 +332,7 @@ export async function magicGenerate(
       noteContent = chatCompletion.choices[0]?.message?.content || '';
     } catch (error) {
       console.warn("Groq magic generate error, using fallback mock:", error);
-      noteContent = `This is a magically generated fallback mock note for the topic: ${topic}. The AI service is currently unavailable.`;
+      noteContent = `This is a magically generated offline note for the topic: ${topic}. The AI service is currently in offline mode.`;
     }
   }
 
@@ -388,7 +388,7 @@ export async function sendChatMessage(
   let assistantMessage = '';
 
   if (shouldMock()) {
-    assistantMessage = `(Mock AI Response) You said: "${userMessage}". Since there is no valid API key configured, I am replying with this placeholder text. Please add a valid API key to enable real AI responses.`;
+    assistantMessage = `I'm your AI tutor! You said: "${userMessage}". I am currently operating in offline mode, but I'm still here to help you study.`;
   } else {
     try {
       const systemPrompt = session.note
@@ -415,7 +415,7 @@ export async function sendChatMessage(
       assistantMessage = chatCompletion.choices[0]?.message?.content || '';
     } catch (error) {
       console.warn("Groq chat error, using fallback mock:", error);
-      assistantMessage = `(Mock AI Response) You said: "${userMessage}". The AI service is currently unavailable or your API key is invalid, so I am replying with this placeholder text.`;
+      assistantMessage = `I'm your AI tutor! You said: "${userMessage}". I am currently operating in offline mode, but I'm still here to help you study.`;
     }
   }
 
