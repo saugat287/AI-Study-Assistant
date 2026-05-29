@@ -19,7 +19,11 @@ export function AnimatedBot({ charX }: { charX: MotionValue<number> }) {
       while (isActive) {
         // Measure dynamically every loop so it responds to window resizes
         const parentWidth = containerRef.current?.parentElement?.offsetWidth || 300;
-        const rightEdge = parentWidth - 90; // Stop just before the emoji
+        const isMobile = window.innerWidth < 640;
+        // On desktop, the font size (text-5xl) is much larger, meaning the emoji takes up more space!
+        // We stop earlier on desktop to prevent running over the massive emoji.
+        const offset = isMobile ? 90 : 140; 
+        const rightEdge = parentWidth - offset;
 
         // Turn right, pause briefly
         setFacing('right');
