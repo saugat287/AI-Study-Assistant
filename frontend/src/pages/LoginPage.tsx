@@ -44,16 +44,8 @@ export function LoginPage() {
       {/* Left brand panel */}
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-[#d946ef] via-[#7a00ff] to-[#00f0ff] items-center justify-center p-12 relative overflow-hidden">
         <div className="absolute inset-0 opacity-20">
-          <motion.div 
-            animate={{ scale: [1, 1.2, 1], x: [0, 50, 0] }}
-            transition={{ duration: 8, repeat: Infinity }}
-            className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-white blur-3xl" 
-          />
-          <motion.div 
-            animate={{ scale: [1, 1.5, 1], x: [0, -50, 0] }}
-            transition={{ duration: 12, repeat: Infinity }}
-            className="absolute bottom-1/4 right-1/4 w-72 h-72 rounded-full bg-white blur-2xl" 
-          />
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-white blur-3xl" />
+          <div className="absolute bottom-1/4 right-1/4 w-72 h-72 rounded-full bg-white blur-2xl" />
         </div>
         <div className="relative text-white max-w-md z-10">
           <div className="flex items-center gap-3 mb-8">
@@ -89,17 +81,9 @@ export function LoginPage() {
 
       {/* Right form */}
       <div className="flex-1 min-h-screen flex items-center justify-center p-6 relative overflow-hidden bg-[#050508]">
-        {/* Animated Floating Orbs for Unreal Theme */}
-        <motion.div 
-          animate={{ scale: [1, 1.2, 1], opacity: [0.15, 0.3, 0.15], rotate: [0, 90, 0] }}
-          transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-          className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#d946ef] rounded-full mix-blend-screen filter blur-[120px] z-0 pointer-events-none"
-        />
-        <motion.div 
-          animate={{ scale: [1, 1.5, 1], opacity: [0.1, 0.25, 0.1], rotate: [0, -90, 0] }}
-          transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-          className="absolute bottom-1/4 right-1/4 w-[30rem] h-[30rem] bg-[#00f0ff] rounded-full mix-blend-screen filter blur-[150px] z-0 pointer-events-none"
-        />
+        {/* Static Floating Orbs for Unreal Theme (Animations removed to fix flickering) */}
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#d946ef] rounded-full mix-blend-screen filter blur-[120px] opacity-20 z-0 pointer-events-none" />
+        <div className="absolute bottom-1/4 right-1/4 w-[30rem] h-[30rem] bg-[#00f0ff] rounded-full mix-blend-screen filter blur-[150px] opacity-20 z-0 pointer-events-none" />
 
         <motion.div
           initial={{ opacity: 0, scale: 0.9, y: 20 }}

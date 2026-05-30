@@ -42,17 +42,9 @@ export function RegisterPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-6 relative overflow-hidden">
-      {/* Animated Floating Orbs for Unreal Theme */}
-      <motion.div 
-        animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3], rotate: [0, 90, 0] }}
-        transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-        className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#d946ef] rounded-full mix-blend-screen filter blur-[120px] opacity-30 z-0"
-      />
-      <motion.div 
-        animate={{ scale: [1, 1.5, 1], opacity: [0.2, 0.4, 0.2], rotate: [0, -90, 0] }}
-        transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-        className="absolute bottom-1/4 right-1/4 w-[30rem] h-[30rem] bg-[#00f0ff] rounded-full mix-blend-screen filter blur-[150px] opacity-20 z-0"
-      />
+      {/* Static Floating Orbs for Unreal Theme (Animations removed to fix flickering) */}
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#d946ef] rounded-full mix-blend-screen filter blur-[120px] opacity-30 z-0 pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 w-[30rem] h-[30rem] bg-[#00f0ff] rounded-full mix-blend-screen filter blur-[150px] opacity-20 z-0 pointer-events-none" />
 
       <motion.div
         initial={{ opacity: 0, scale: 0.9, y: 20 }}
