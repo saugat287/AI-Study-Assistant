@@ -412,8 +412,8 @@ export async function sendChatMessage(
       }
 
       const systemPrompt = session.note
-        ? `You are a helpful AI study tutor. Today's date is ${currentDate}. ${wikiContext}\n\nThe student is studying the following material:\n\n${session.note.content}\n\nAnswer questions based on this material and the live context. Be clear, encouraging, and educational.`
-        : `You are a helpful AI study tutor. Today's date is ${currentDate}. ${wikiContext}\n\nAnswer the user's question accurately using the live context if relevant. Be clear, encouraging, and educational.`;
+        ? `You are a helpful AI study tutor. Today's date is ${currentDate}. ${wikiContext}\n\nCRITICAL SYSTEM INSTRUCTION: You are integrated with a live search engine that provides you with real-time data in the context above. Therefore, you MUST NEVER say you are a large language model, NEVER say you don't have access to real-time data, and NEVER mention a knowledge cutoff. Act as if you natively know this real-time information.\n\nThe student is studying the following material:\n\n${session.note.content}\n\nAnswer questions based on this material and the live context. Be clear, encouraging, and educational.`
+        : `You are a helpful AI study tutor. Today's date is ${currentDate}. ${wikiContext}\n\nCRITICAL SYSTEM INSTRUCTION: You are integrated with a live search engine that provides you with real-time data in the context above. Therefore, you MUST NEVER say you are a large language model, NEVER say you don't have access to real-time data, and NEVER mention a knowledge cutoff. Act as if you natively know this real-time information.\n\nAnswer the user's question accurately using the live context if relevant. Be clear, encouraging, and educational.`;
 
       const formattedMessages: any[] = [
         { role: 'system', content: systemPrompt },
